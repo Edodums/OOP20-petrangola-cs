@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace OOP_petrangola_cs.models.cards
 {
@@ -11,17 +9,17 @@ namespace OOP_petrangola_cs.models.cards
             ICardFactory cardFactory = new CardFactory();
             ICardsFactory cardsFactory = new CardsFactory();
             CombinationFactory combinationFactory = new CombinationFactory();
+            List<ICombination> cardsToDeal = new List<ICombination>();
             List<ICombination> combinations = combinationFactory.CreateCombinations(cardFactory.CreateDeck(), playerDetailsSize);
 
             for (int index = 0; index < playerDetailsSize; index++)
             {
-                cardsToDeal.put(index, combinations[index]);
+                cardsToDeal.Add(combinations[index]);
             }
 
-            cardsToDeal.put(board, combinations[combinations.Count - 1]);
+            cardsToDeal.Add(combinations[combinations.Count - 1]);
 
-
-            return cardsFactory.createCards(cardsToDeal);
+            return cardsFactory.CreateCards(cardsToDeal);
         }
     }
 }

@@ -6,7 +6,21 @@ namespace OOP_petrangola_cs.models.cards
     {
         public List<ICards> CreateCards(List<ICombination> list)
         {
-            throw new System.NotImplementedException();
+            List<ICards> cardsList = new List<ICards>();
+
+            foreach (ICombination combination in list)
+            {
+                if (combination == list[^1])
+                {
+                    cardsList.Add(new Cards(combination, true));
+                    break;
+                }
+
+                cardsList.Add(new Cards(combination, false));
+            }
+
+
+            return cardsList;
         }
     }
 }
