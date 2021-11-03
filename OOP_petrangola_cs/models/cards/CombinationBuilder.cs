@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace OOP_petrangola_cs.models
+namespace OOP_petrangola_cs.models.cards
 {
     class CombinationBuilder : ICombinationBuilder
     {

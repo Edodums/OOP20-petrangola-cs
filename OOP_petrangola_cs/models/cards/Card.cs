@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OOP_petrangola_cs.models
+﻿namespace OOP_petrangola_cs.models.cards
 {
-    class Card : ICard
+    public class Card : ICard
     {
         public Card(Name name, Suit suit)
         {

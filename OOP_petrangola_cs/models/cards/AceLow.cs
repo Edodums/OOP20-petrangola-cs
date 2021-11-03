@@ -1,6 +1,6 @@
-﻿namespace OOP_petrangola_cs.models
+﻿namespace OOP_petrangola_cs.models.cards
 {
-    class AceLow : Card
+    public class AceLow : Card
     {
         public AceLow(Name name, Suit suit) : base(name, suit)
         {

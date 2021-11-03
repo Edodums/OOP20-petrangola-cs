@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OOP_petrangola_cs.models
+namespace OOP_petrangola_cs.models.cards
 {
     class CombinationFactory : ICombinationFactory
     {
