@@ -1,98 +1,99 @@
-﻿using System;
+﻿using OOP_petrangola_cs.models.cards;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace OOP_petrangola_cs.models.npc
 {
-    class BestChoice : AbstractChoiceStrategy
+    public class BestChoice : AbstractChoiceStrategy
     {
         public override List<ICards> ChooseCards(List<ICards> cardsList)
         {
-            final List<Card> cardList = cardsList.stream()
-                                      .map(Cards::getCombination)
-                                      .map(Combination::getCards)
-                                      .flatMap(List::stream)
-                                      .collect(Collectors.toList());
+            List<ICard> cardList = cardsList.Select(cards => cards.Combination)
+                                            .Select(combination => combination.GetCards())
+                                            .Cast<ICard>()
+                                            .ToList();
 
-            final Cards boardCards = getBoardCards(cardsList);
-            final Cards playerCards = getPlayerCards(cardsList);
+            ICards boardCards = GetBoardCards(cardsList);
+            ICards playerCards = GetPlayerCards(cardsList);
 
+            List<ICard> maxCombination = GetMaxCombinationListOfCards(cardList);
+            List<ICard> complement = cardList.Where(card => !maxCombination.Contains(card)).ToList();
 
-            final List<Card> maxCombination = getMaxCombinationListOfCards(cardList);
-            final List<Card> complement = cardList
-                                                .stream()
-                                                .filter(card-> !maxCombination.contains(card))
-                                                .collect(Collectors.toList());
-
-            if (playerCards.getPlayer().isPresent() && maxCombination.equals(playerCards.getCombination().getCards()))
+            if (maxCombination.Equals(playerCards.Combination.GetCards()))
             {
-                return List.of();
+                return new List<ICards>();
             }
 
-            playerCards.getCombination().replaceCards(maxCombination, playerCards.getCombination().getCards());
-            boardCards.getCombination().replaceCards(complement, boardCards.getCombination().getCards());
-
-            return List.of(boardCards, playerCards);
+            playerCards.Combination.ReplaceCards(maxCombination, playerCards.Combination.GetCards());
+            boardCards.Combination.ReplaceCards(complement, boardCards.Combination.GetCards());
+           
+            return new List<ICards>{
+                playerCards,
+                boardCards
+            };
         }
 
-        private List<Card> getMaxCombinationListOfCards(List<Card> cardList)
+        private List<ICard> GetMaxCombinationListOfCards(List<ICard> cardList)
         {
-            List<List<Card>> combinations = generateAllCombinations(cardList);
+            List<List<ICard>> combinations = GenerateAllCombinations(cardList);
 
-            Optional<List<Card>> tris = combinations.stream().filter(CombinationChecker::isTris).findAny();
+            IEnumerable<List<ICard>> tris = combinations.Where(combination => ICombinationChecker.IsTris(combination));
 
-            if (tris.isPresent())
+            if (tris.Any())
             {
-                return tris.get();
+                return tris.First();
             }
 
-            Optional<List<Card>> flush = combinations.stream().filter(CombinationChecker::isFlush).findAny();
+            IEnumerable<List<ICard>> flush = combinations.Where(combination => ICombinationChecker.IsFlush(combination));
 
-            if (flush.isPresent())
+            if (flush.Any())
             {
-                return flush.get();
+                return flush.First();
             }
 
-            Optional<List<Card>> flushWithAceLow = combinations.stream().filter(CombinationChecker::isAceLow).findAny();
+            IEnumerable<List<ICard>> flushWithAceLow = combinations.Where(combination => ICombinationChecker.IsAceLow(combination));
 
-            if (flushWithAceLow.isPresent())
+            if (flushWithAceLow.Any())
             {
-                return flushWithAceLow.get();
+                return flushWithAceLow.First();
             }
 
-            List<Card> list = new ArrayList<>();
-
-            combinations
-                  .stream()
-                  .map(cards-> new Pair<>(cards, getMaxCombination(cards)))
-                  .max(Comparator.comparingInt(Pair::getY))
-                  .ifPresent(pair->list.addAll(pair.getX()));
-
-            return list;
+            return combinations
+                  .Select(cards => new KeyValuePair<List<ICard>, int>(cards, GetMaxCombination(cards)))
+                  .OrderByDescending(pair => pair.Value)
+                  .First()
+                  .Key;
         }
 
-        private List<List<Card>> generateAllCombinations(List<Card> cardList)
+        private List<List<ICard>> GenerateAllCombinations(List<ICard> cardList)
         {
-            return Generator.combination(cardList)
-                         .simple(DeckConstants.DECK_SIZE.getValue())
-                         .stream()
-                         .collect(Collectors.toList());
+            List<List<ICard>> combinations = new List<List<ICard>>();
+            IEnumerable<IEnumerable<ICard>> permutations  = GetPermutations(cardList, 3);
+
+            foreach (IEnumerable<ICard> listOfCards in permutations)
+            {
+                combinations.Add(listOfCards.ToList());
+            }
+            
+            return combinations;
+        }
+
+        /// <summary>
+        /// Thanks to https://stackoverflow.com/a/10629938/13455322 : Permutations without repetion using recursion
+        /// </summary>
+        private static IEnumerable<IEnumerable<T>> GetPermutations<T>(IEnumerable<T> list, int length)
+        {
+            return length == 1 ? list.Select(t => new T[] { t })
+                               : GetPermutations(list, length - 1).SelectMany(t => list.Where(obj => !t.Contains(obj)), (t1, t2) => t1.Concat(new T[] { t2 }));
         }
 
 
-        private int getMaxCombination(List<Card> cards)
+        private int GetMaxCombination(List<ICard> cardList)
         {
-            AtomicInteger max = new AtomicInteger();
-
-            cards.stream()
-                  .collect(Collectors.groupingBy(Card::getSuit))
-                  .entrySet()
-                  .stream()
-                  .map(entry-> new Pair<>(entry.getKey(), entry.getValue().stream().mapToInt(Card::getValue).sum()))
-                  .max(Comparator.comparingInt(Pair::getY))
-                  .ifPresent(pair->max.set(pair.getY()));
-
-            return max.get();
+            return cardList.GroupBy(card => card.Suit)
+                           .Select(cardEntry => new KeyValuePair<Suit, int>(cardEntry.Key, cardEntry.Sum(card => card.Value)))
+                           .Max(card => card.Value);
         }
     }
    
