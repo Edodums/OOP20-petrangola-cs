@@ -1,7 +1,7 @@
-﻿using System;
+﻿using OOP_petrangola_cs.models.cards;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace OOP_petrangola_cs.models.npc
 {
@@ -9,15 +9,17 @@ namespace OOP_petrangola_cs.models.npc
     {
         public abstract List<ICards> ChooseCards(List<ICards> cardsList);
 
-        ICards GetBoardCards(List<ICards> cardsList)
+        public ICards GetBoardCards(List<ICards> cardsList)
         {
-            return GetCardsByPredicate(cardsList, ICards.IsCommunity);
+            static bool isCommunityCards(ICards cards) => cards.Community;
+            return GetCardsByPredicate(cardsList, isCommunityCards);
         
         }
 
-        ICards GetPlayerCards(List<ICards> cardsList)
+        public ICards GetPlayerCards(List<ICards> cardsList)
         {
-            return GetCardsByPredicate(cardsList, ICards.IsPlayerCards);
+            static bool isPlayerCards(ICards cards) => !cards.Community;
+            return GetCardsByPredicate(cardsList, isPlayerCards);
         }
 
         private ICards GetCardsByPredicate(List<ICards> cardsList, Predicate<ICards> predicate)

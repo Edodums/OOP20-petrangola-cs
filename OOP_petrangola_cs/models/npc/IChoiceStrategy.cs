@@ -1,8 +1,7 @@
-﻿using System;
+﻿using OOP_petrangola_cs.models.cards;
 using System.Collections.Generic;
-using System.Text;
 
-namespace OOP_petrangola_cs.models
+namespace OOP_petrangola_cs.models.npc
 {
     public interface IChoiceStrategy
     {
