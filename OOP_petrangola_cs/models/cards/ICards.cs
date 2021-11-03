@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OOP_petrangola_cs.models
+﻿namespace OOP_petrangola_cs.models.cards
 {
     public interface ICards
     {
-        ICombination Combination { get; set; }
+        ICombination Combination { get; }
 
-        bool Community { get; set; }
+        bool Community { get; }
 
     }
 }
