@@ -9,10 +9,7 @@ namespace OOP_petrangola_cs.models.npc
     {
         public override List<ICards> ChooseCards(List<ICards> cardsList)
         {
-            List<ICard> cardList = cardsList.Select(cards => cards.Combination)
-                                            .Select(combination => combination.GetCards())
-                                            .Cast<ICard>()
-                                            .ToList();
+            List<ICard> cardList = cardsList.SelectMany(cards => cards.Combination.GetCards()).ToList();
 
             ICards boardCards = GetBoardCards(cardsList);
             ICards playerCards = GetPlayerCards(cardsList);
@@ -27,7 +24,7 @@ namespace OOP_petrangola_cs.models.npc
 
             playerCards.Combination.ReplaceCards(maxCombination, playerCards.Combination.GetCards());
             boardCards.Combination.ReplaceCards(complement, boardCards.Combination.GetCards());
-           
+
             return new List<ICards>{
                 playerCards,
                 boardCards
