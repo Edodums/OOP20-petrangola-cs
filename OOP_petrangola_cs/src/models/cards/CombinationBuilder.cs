@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace OOP_petrangola_cs.models.cards
@@ -23,23 +24,25 @@ namespace OOP_petrangola_cs.models.cards
                 throw new System.Exception("Too many cards");
             }
 
-
             return this;
         }
 
         public List<ICard> GetCards()
         {
-            return this.cards;
+            return cards;
         }
-
 
         private class Combination : ICombination
         {
-            private readonly List<ICard> cards;
+            private readonly ICombinationBuilder builder;
+            private readonly List<IObserver<ICombination>> observers = new List<IObserver<ICombination>>();
+
+            private List<ICard> cards;
 
             public Combination(ICombinationBuilder builder)
             {
-                this.cards = builder.GetCards();
+                this.builder = builder;
+                cards = builder.GetCards();
             }
 
             public KeyValuePair<List<ICard>, int> GetBest()
@@ -57,8 +60,6 @@ namespace OOP_petrangola_cs.models.cards
                                  .Select(card => new AceLow(card.Name, card.Suit))
                                  .Cast<ICard>()
                                  .ToList();
-
-
                 }
 
                 int bestValue = cards.GroupBy(card => card.Suit)
@@ -77,102 +78,66 @@ namespace OOP_petrangola_cs.models.cards
 
             public List<ICard> GetCards()
             {
-                return this.cards;
+                return cards;
             }
-        }
 
-    }
-
-    public interface ICombinationChecker {
-
-        /// <summary>
-        /// return true if the cards have the same name value
-        /// <summary>
-        static bool IsTris(List<ICard> cards)
-        {
-            foreach (ICard card in cards)
+            public void ReplaceCards(List<ICard> cardsToPut, List<ICard> cardsToReplace)
             {
-                if (!cards[0].Name.Equals(card.Name))
+                List<ICard> tempCards = new List<ICard>(GetCards());
+
+                foreach (ICard cardToReplace in cardsToReplace)
                 {
-                    return false;
+                    tempCards.Remove(cardToReplace);
+                }
+                
+                foreach (ICard cardToPut in cardsToPut)
+                {
+                    tempCards.Add(cardToPut);
+                }
+
+                SetCards(tempCards);
+                Notify(this);
+            }
+
+            private void SetCards(List<ICard> cards) => this.cards = cards;
+
+            public IDisposable Subscribe(IObserver<ICombination> observer)
+            {
+                if (!observers.Contains(observer))
+                    observers.Add(observer);
+
+                return new Unsubscriber(observers, observer);
+            }
+
+            private void Notify(ICombination combination)
+            {
+                foreach(var o in observers)
+                {
+                    o.OnNext(combination);
                 }
             }
-
-            return true;
         }
 
         /// <summary>
-        /// Return true if the cards is have the same suit and are consecutive
+        /// https://docs.microsoft.com/en-us/dotnet/standard/events/how-to-implement-a-provider
         /// </summary>
-        static bool IsFlush(List<ICard> cards)
+        private class Unsubscriber : IDisposable
         {
-            if (!AreSameSuit(cards))
+            private readonly List<IObserver<ICombination>> _observers;
+            private IObserver<ICombination> _observer;
+
+            public Unsubscriber(List<IObserver<ICombination>> observers, IObserver<ICombination> observer)
             {
-                return false;
+                _observers = observers;
+                _observer = observer;
             }
 
-            if (IsAceLow(cards))
+            public void Dispose()
             {
-                return true;
+                if (!(_observer == null)) _observers.Remove(_observer);
             }
-
-            List<int> list = cards.Select(card => GetCardIntegerValue(card))
-                                  .Cast<int>()
-                                  .ToList();
-
-            int max = list.Max();
-            int min = list.Min();
-
-            return (max - min) == 2;
-        }
-
-        /// <summary>
-        /// Simply if not all Card have the same value as Suit
-        /// <summary>
-        static bool AreSameSuit(List<ICard> cards)
-        {
-            foreach (Card card in cards)
-            {
-                if (!cards[0].Suit.Equals(card.Suit))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-
-        /// <summary>
-        /// return true if the Ace card is in combination with 2 and 3, obviously it has to have the same suit
-        /// <summary>
-        static bool IsAceLow(List<ICard> cards)
-        {
-            Name[] lowDeck = { Name.Asso, Name.Due, Name.Tre };
-
-            return AreSameSuit(cards) && cards.Select(card => card.Name)
-                                              .ToList()
-                                              .All(new List<Name>(lowDeck).Contains);
-        }
-
-        static int GetCardIntegerValue(ICard card)
-        {
-            if (card.Name.Equals(Name.Fante))
-            {
-                return 8;
-            }
-
-            if (card.Name.Equals(Name.Cavallo))
-            {
-                return 9;
-            }
-
-            return card.Value;
-        }
-
-        static bool IsAnyKindOfPetrangola(List<ICard> cardList)
-        {
-            return IsFlush(cardList) || IsTris(cardList);
         }
     }
+
+    
 }
