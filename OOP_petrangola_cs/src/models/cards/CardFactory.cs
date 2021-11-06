@@ -10,7 +10,7 @@ namespace OOP_petrangola_cs.models.cards
             return ShuffleCards(CreateSimpleDeck());
         }
 
-        private List<ICard> ShuffleCards(List<ICard> deck)
+        private static List<ICard> ShuffleCards(List<ICard> deck)
         {
             Shuffle(deck);
 

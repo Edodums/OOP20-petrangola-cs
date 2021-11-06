@@ -6,9 +6,9 @@ namespace OOP_petrangola_cs.models.cards
     {
         public List<ICards> CreateCards(List<ICombination> list)
         {
-            List<ICards> cardsList = new List<ICards>();
+            var cardsList = new List<ICards>();
 
-            foreach (ICombination combination in list)
+            foreach (var combination in list)
             {
                 if (combination == list[^1])
                 {

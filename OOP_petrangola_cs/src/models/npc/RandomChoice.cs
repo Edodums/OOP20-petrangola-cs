@@ -9,15 +9,15 @@ namespace OOP_petrangola_cs.models.npc
     {
         public override List<ICards> ChooseCards(List<ICards> cardsList)
         {
-            Random random = new Random();
-            int indexToTake = random.Next(2);
-            int indexToGive = random.Next(2);
+            var random = new Random();
+            var indexToTake = random.Next(2);
+            var indexToGive = random.Next(2);
 
-            ICards boardCards = GetBoardCards(cardsList);
-            ICards playerCards = GetPlayerCards(cardsList);
+            var boardCards = GetBoardCards(cardsList);
+            var playerCards = GetPlayerCards(cardsList);
 
-            ICard playerCard = playerCards.Combination.GetCards()[indexToGive];
-            ICard boardCard = boardCards.Combination.GetCards()[indexToTake];
+            var playerCard = playerCards.Combination.GetCards()[indexToGive];
+            var boardCard = boardCards.Combination.GetCards()[indexToTake];
 
             if (random.NextDouble() > 0.5)
             {
