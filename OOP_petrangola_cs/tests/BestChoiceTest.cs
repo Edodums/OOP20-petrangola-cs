@@ -31,7 +31,13 @@ namespace OOP_petrangola_cs.tests
             {
                 var listOfCards = new List<ICards>() { oldPlayerCards, boardCards };
                 var bestChoiceExchangedCards = bestChoice.ChooseCards(listOfCards);
-                
+
+                if (!bestChoiceExchangedCards.Any())
+                {
+                    Assert.That(true, "nothing changed");
+                    continue;
+                }
+
                 boardCards = bestChoiceExchangedCards.First(cards => cards.Community);
 
                 var newPlayerCards = bestChoiceExchangedCards.First(cards => !cards.Community);

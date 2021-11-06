@@ -27,10 +27,16 @@ namespace OOP_petrangola_cs.tests
         [Test]
         public void ActuallyWorksTest()
         {
-            foreach(ICards cards in playersCardsList)
+            foreach(var cards in playersCardsList)
             {
                 var listOfCards = new List<ICards>() { cards, boardCards };
                 var randomChoiceExchangedCards = randomChoice.ChooseCards(listOfCards);
+
+                if (!randomChoiceExchangedCards.Any())
+                {
+                    Assert.That(true, "nothing changed");
+                    continue;
+                }
                 
                 var newBoardCards = randomChoiceExchangedCards.First(cardsListTemp => cardsListTemp.Community);
                 var newPlayerCards = randomChoiceExchangedCards.First(cardsListTemp => !cardsListTemp.Community);
