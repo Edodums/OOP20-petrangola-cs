@@ -8,18 +8,10 @@ namespace OOP_petrangola_cs.models.cards
 
         /// <summary>
         /// return true if the cards have the same name value
-        /// <summary>
+        /// </summary>
         static bool IsTris(List<ICard> cards)
         {
-            foreach (ICard card in cards)
-            {
-                if (!cards[0].Name.Equals(card.Name))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return cards.All(card => cards[0].Name.Equals(card.Name));
         }
 
         /// <summary>
@@ -37,23 +29,21 @@ namespace OOP_petrangola_cs.models.cards
                 return true;
             }
 
-            List<int> list = cards.Select(card => GetCardIntegerValue(card))
-                                  .Cast<int>()
-                                  .ToList();
-
-            int max = list.Max();
-            int min = list.Min();
+            var list = cards.Select(GetCardIntegerValue).ToList();
+            var max = list.Max();
+            var min = list.Min();
 
             return (max - min) == 2;
         }
 
         /// <summary>
         /// Simply if not all Card have the same value as Suit
-        /// <summary>
+        /// </summary>
         static bool AreSameSuit(List<ICard> cards)
         {
-            foreach (Card card in cards)
+            foreach (var card1 in cards)
             {
+                var card = (Card) card1;
                 if (!cards[0].Suit.Equals(card.Suit))
                 {
                     return false;
@@ -66,7 +56,7 @@ namespace OOP_petrangola_cs.models.cards
 
         /// <summary>
         /// return true if the Ace card is in combination with 2 and 3, obviously it has to have the same suit
-        /// <summary>
+        /// </summary>
         static bool IsAceLow(List<ICard> cards)
         {
             Name[] lowDeck = { Name.Asso, Name.Due, Name.Tre };
@@ -83,12 +73,7 @@ namespace OOP_petrangola_cs.models.cards
                 return 8;
             }
 
-            if (card.Name.Equals(Name.Cavallo))
-            {
-                return 9;
-            }
-
-            return card.Value;
+            return card.Name.Equals(Name.Cavallo) ? 9 : card.Value;
         }
 
         static bool IsAnyKindOfPetrangola(List<ICard> cardList)

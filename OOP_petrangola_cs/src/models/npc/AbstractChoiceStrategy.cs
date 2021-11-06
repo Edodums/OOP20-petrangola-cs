@@ -11,20 +11,20 @@ namespace OOP_petrangola_cs.models.npc
 
         public ICards GetBoardCards(List<ICards> cardsList)
         {
-            static bool isCommunityCards(ICards cards) => cards.Community;
-            return GetCardsByPredicate(cardsList, isCommunityCards);
+            static bool IsCommunityCards(ICards cards) => cards.Community;
+            return GetCardsByPredicate(cardsList, IsCommunityCards);
         
         }
 
         public ICards GetPlayerCards(List<ICards> cardsList)
         {
-            static bool isPlayerCards(ICards cards) => !cards.Community;
-            return GetCardsByPredicate(cardsList, isPlayerCards);
+            static bool IsPlayerCards(ICards cards) => !cards.Community;
+            return GetCardsByPredicate(cardsList, IsPlayerCards);
         }
 
         private ICards GetCardsByPredicate(List<ICards> cardsList, Predicate<ICards> predicate)
         {
-            return cardsList.Where(cards => predicate(cards)).First();
+            return cardsList.First(cards => predicate(cards));
         }
     }
 }

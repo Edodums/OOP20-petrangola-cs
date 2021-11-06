@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 
-namespace OOP_petrangola_cs.src.utils
+namespace OOP_petrangola_cs.utils
 {
     /// <summary>
-    /// Nice way to splite an array using Linq https://stackoverflow.com/a/1841276/13455322
+    /// Nice way to split an array using Linq https://stackoverflow.com/a/1841276/13455322
     /// </summary>
     public interface IArrayService
     {

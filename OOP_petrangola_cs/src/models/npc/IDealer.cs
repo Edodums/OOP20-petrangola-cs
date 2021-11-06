@@ -9,16 +9,16 @@ namespace OOP_petrangola_cs.models.npc
         {
             ICardFactory cardFactory = new CardFactory();
             ICardsFactory cardsFactory = new CardsFactory();
-            CombinationFactory combinationFactory = new CombinationFactory();
-            List<ICombination> cardsToDeal = new List<ICombination>();
-            List<ICombination> combinations = combinationFactory.CreateCombinations(cardFactory.CreateDeck(), playerDetailsSize);
+            var combinationFactory = new CombinationFactory();
+            var cardsToDeal = new List<ICombination>();
+            var combinations = combinationFactory.CreateCombinations(cardFactory.CreateDeck(), playerDetailsSize);
 
-            for (int index = 0; index < playerDetailsSize; index++)
+            for (var index = 0; index < playerDetailsSize; index++)
             {
                 cardsToDeal.Add(combinations[index]);
             }
 
-            cardsToDeal.Add(combinations[combinations.Count - 1]);
+            cardsToDeal.Add(combinations[^1]);
 
             return cardsFactory.CreateCards(cardsToDeal);
         }

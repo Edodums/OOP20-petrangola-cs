@@ -1,24 +1,24 @@
 ﻿using OOP_petrangola_cs.models.cards;
 using OOP_petrangola_cs.models.npc;
-using OOP_petrangola_cs.src.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OOP_petrangola_cs.utils;
 
 namespace OOP_petrangola_cs
 {
     public class Program
     {
-        private const int playerDetailsSize = 2;
+        private const int PlayerDetailsSize = 2;
 
         public static void Main()
         {
             IChoiceStrategy bestChoice = new BestChoice();
             IChoiceStrategy randomChoice = new RandomChoice();
 
-            List<ICards> cardsList = IDealer.GetCardsToDeal(playerDetailsSize);
+            List<ICards> cardsList = IDealer.GetCardsToDeal(PlayerDetailsSize);
 
-            ICards boardCards = cardsList.Where(cards => cards.Community).First();
+            ICards boardCards = cardsList.First(cards => cards.Community);
 
             IArrayService.SplitMidPoint(cardsList.Where(cards => !cards.Community).ToArray(),
                                     out ICards[] first,
@@ -35,9 +35,9 @@ namespace OOP_petrangola_cs
                 var listOfCards = new List<ICards>() { cards, boardCards };
                 var bestChoiceExchangedCards = bestChoice.ChooseCards(listOfCards);
 
-                boardCards = bestChoiceExchangedCards.Where(cards => cards.Community).First();
+                boardCards = bestChoiceExchangedCards.First(cardsLists => cardsLists.Community);
 
-                var newPlayerCards = bestChoiceExchangedCards.Where(cards => !cards.Community).First();
+                var newPlayerCards = bestChoiceExchangedCards.First(cardsLists => !cardsLists.Community);
 
                 Console.WriteLine("New player cards: " +  String.Join(", ", newPlayerCards.Combination.GetCards().Select(card => card.FullName)));
                 Console.WriteLine("New board cards: "  + String.Join(", ", boardCards.Combination.GetCards().Select(card => card.FullName)));
@@ -54,9 +54,9 @@ namespace OOP_petrangola_cs
                 var listOfCards = new List<ICards>() { cards, boardCards };
                 var randomChoiceExchangedCards = randomChoice.ChooseCards(listOfCards);
 
-                boardCards = randomChoiceExchangedCards.Where(cards => cards.Community).First();
+                boardCards = randomChoiceExchangedCards.First(cardsLists => cardsLists.Community);
 
-                var newPlayerCards = randomChoiceExchangedCards.Where(cards => !cards.Community).First();
+                var newPlayerCards = randomChoiceExchangedCards.First(cardsLists => !cardsLists.Community);
 
                 Console.WriteLine("New player cards: " + String.Join(", ", newPlayerCards.Combination.GetCards().Select(card => card.FullName)));
                 Console.WriteLine("New board cards: " + String.Join(", ", boardCards.Combination.GetCards().Select(card => card.FullName)));

@@ -21,7 +21,7 @@ namespace OOP_petrangola_cs.tests
             cardsList = IDealer.GetCardsToDeal(playerDetailsSize);
 
             playersCardsList = cardsList.Where(cards => !cards.Community).ToList();
-            boardCards = cardsList.Where(cards => cards.Community).First();
+            boardCards = cardsList.First(cards => cards.Community);
         }
 
         [Test]
@@ -32,22 +32,17 @@ namespace OOP_petrangola_cs.tests
                 var listOfCards = new List<ICards>() { cards, boardCards };
                 var randomChoiceExchangedCards = randomChoice.ChooseCards(listOfCards);
                 
-                var newBoardCards = randomChoiceExchangedCards.Where(cards => cards.Community).First();
-                var newPlayerCards = randomChoiceExchangedCards.Where(cards => !cards.Community).First();
+                var newBoardCards = randomChoiceExchangedCards.First(cardsListTemp => cardsListTemp.Community);
+                var newPlayerCards = randomChoiceExchangedCards.First(cardsListTemp => !cardsListTemp.Community);
 
-                foreach(ICard card in cards.Combination.GetCards()) {
-                    if (newPlayerCards.Combination.GetCards().Count == 0 || !newPlayerCards.Combination.GetCards().Contains(card))
-                    {
-                        Assert.Pass();
-                    }
+                foreach (var unused in cards.Combination.GetCards().Where(card => newPlayerCards.Combination.GetCards().Count == 0 || !newPlayerCards.Combination.GetCards().Contains(card)))
+                {
+                    Assert.Pass();
                 }
 
-                foreach (ICard card in boardCards.Combination.GetCards())
+                foreach (var unused in boardCards.Combination.GetCards().Where(card => !newBoardCards.Combination.GetCards().Contains(card)))
                 {
-                    if (!newBoardCards.Combination.GetCards().Contains(card))
-                    {
-                        Assert.Pass();
-                    }
+                    Assert.Pass();
                 }
             }
         }

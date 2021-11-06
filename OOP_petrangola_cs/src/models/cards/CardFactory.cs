@@ -12,11 +12,9 @@ namespace OOP_petrangola_cs.models.cards
 
         private List<ICard> ShuffleCards(List<ICard> deck)
         {
-            List<ICard> tempDeck = deck;
+            Shuffle(deck);
 
-            Shuffle(tempDeck);
-
-            return tempDeck;
+            return deck;
         }
 
         private List<ICard> CreateSimpleDeck()
@@ -38,19 +36,17 @@ namespace OOP_petrangola_cs.models.cards
         /// <summary>
         ///  Thanks to https://stackoverflow.com/questions/273313/randomize-a-listt
         /// </summary>
-        private static void Shuffle<ICard>(List<ICard> list)
+        private static void Shuffle<T>(List<T> list)
         {
-            Random random = new Random();
-            int n = list.Count;
+            var random = new Random();
+            var n = list.Count;
 
             while (n > 1)
             {
                 n--;
                 
-                int k = random.Next(n + 1);
-                ICard value = list[k];
-                list[k] = list[n];
-                list[n] = value;
+                var k = random.Next(n + 1);
+                (list[k], list[n]) = (list[n], list[k]);
             }
         }
     }

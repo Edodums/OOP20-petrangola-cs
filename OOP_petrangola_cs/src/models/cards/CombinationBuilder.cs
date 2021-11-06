@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OOP_petrangola_cs.models.cards
 {
-    class CombinationBuilder : ICombinationBuilder
+    internal class CombinationBuilder : ICombinationBuilder
     {
         private List<ICard> cards;
 
@@ -13,11 +13,11 @@ namespace OOP_petrangola_cs.models.cards
             return new Combination(this);
         }
 
-        public ICombinationBuilder SetCards(List<ICard> cards)
+        public ICombinationBuilder SetCards(List<ICard> cardsList)
         {
-            if (cards.Count == 3)
+            if (cardsList.Count == 3)
             {
-                this.cards = cards;
+                this.cards = cardsList;
             }
             else
             {
@@ -47,30 +47,30 @@ namespace OOP_petrangola_cs.models.cards
 
             public KeyValuePair<List<ICard>, int> GetBest()
             {
-                List<ICard> cards = new List<ICard>(GetCards());
+                List<ICard> cardList = new List<ICard>(GetCards());
 
-                if (ICombinationChecker.IsTris(cards))
+                if (ICombinationChecker.IsTris(cardList))
                 {
-                    return new KeyValuePair<List<ICard>, int>(cards, cards[0].Value * 3);
+                    return new KeyValuePair<List<ICard>, int>(cardList, cardList[0].Value * 3);
                 }
 
-                if (ICombinationChecker.IsAceLow(cards))
+                if (ICombinationChecker.IsAceLow(cardList))
                 {
-                    cards = cards.Where(card => card.Name.Equals(Name.Asso))
+                    cardList = cardList.Where(card => card.Name.Equals(Name.Asso))
                                  .Select(card => new AceLow(card.Name, card.Suit))
                                  .Cast<ICard>()
                                  .ToList();
                 }
 
                 
-                int bestValue = cards.GroupBy(card => card.Suit)
-                                     .Select(cards => new
+                int bestValue = cardList.GroupBy(card => card.Suit)
+                                     .Select(cardListSuited => new
                                      {
-                                         Sum = cards.Sum(card => card.Value)
+                                         Sum = cardListSuited.Sum(card => card.Value)
                                      })
                                      .Max(card => card.Sum);
 
-                return new KeyValuePair<List<ICard>, int>(cards, bestValue);
+                return new KeyValuePair<List<ICard>, int>(cardList, bestValue);
             }
 
             public List<ICard> GetCards()
@@ -80,23 +80,20 @@ namespace OOP_petrangola_cs.models.cards
 
             public void ReplaceCards(List<ICard> cardsToPut, List<ICard> cardsToReplace)
             {
-                List<ICard> tempCards = new List<ICard>(GetCards());
+                var tempCards = new List<ICard>(GetCards());
 
-                foreach (ICard cardToReplace in cardsToReplace)
+                foreach (var cardToReplace in cardsToReplace)
                 {
                     tempCards.Remove(cardToReplace);
                 }
-                
-                foreach (ICard cardToPut in cardsToPut)
-                {
-                    tempCards.Add(cardToPut);
-                }
+
+                tempCards.AddRange(cardsToPut);
 
                 SetCards(tempCards);
                 Notify(this);
             }
 
-            private void SetCards(List<ICard> cards) => this.cards = cards;
+            private void SetCards(List<ICard> cardsList) => this.cards = cardsList;
 
             public IDisposable Subscribe(IObserver<ICombination> observer)
             {
@@ -120,18 +117,18 @@ namespace OOP_petrangola_cs.models.cards
         /// </summary>
         private class Unsubscriber : IDisposable
         {
-            private readonly List<IObserver<ICombination>> _observers;
-            private IObserver<ICombination> _observer;
+            private readonly List<IObserver<ICombination>> observers;
+            private readonly IObserver<ICombination> observer;
 
             public Unsubscriber(List<IObserver<ICombination>> observers, IObserver<ICombination> observer)
             {
-                _observers = observers;
-                _observer = observer;
+                this.observers = observers;
+                this.observer = observer;
             }
 
             public void Dispose()
             {
-                if (!(_observer == null)) _observers.Remove(_observer);
+                if (observer != null) observers.Remove(observer);
             }
         }
     }
