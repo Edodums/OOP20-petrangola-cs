@@ -62,16 +62,13 @@ namespace OOP_petrangola_cs.models.cards
                                  .ToList();
                 }
 
+                
                 int bestValue = cards.GroupBy(card => card.Suit)
-                                    .Select(cards => new
-                                    {
-                                        Sum = cards.Sum(card => card.Value)
-                                    })
-                                    .GroupBy(card => card.Sum)
-                                    .Cast<int>()
-                                    .ToList()
-                                    .Max();
-
+                                     .Select(cards => new
+                                     {
+                                         Sum = cards.Sum(card => card.Value)
+                                     })
+                                     .Max(card => card.Sum);
 
                 return new KeyValuePair<List<ICard>, int>(cards, bestValue);
             }
