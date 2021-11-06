@@ -21,7 +21,7 @@ namespace OOP_petrangola_cs.models.cards
             }
             else
             {
-                throw new System.Exception("Too many cards");
+                throw new Exception("Too many cards");
             }
 
             return this;

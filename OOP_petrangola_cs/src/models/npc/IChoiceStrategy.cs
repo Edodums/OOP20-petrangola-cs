@@ -8,7 +8,7 @@ namespace OOP_petrangola_cs.models.npc
         /// <summary>
         /// cardList has inside a player cards model and the board cards model
         /// the method returns return the two model updated after applying the choosing strategy
-        /// <summary>
+        /// </summary>
         List<ICards> ChooseCards(List<ICards> cardsList);
     }
 }

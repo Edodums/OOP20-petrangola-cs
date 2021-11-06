@@ -6,16 +6,16 @@ namespace OOP_petrangola_cs.models.cards
     {
         public List<ICombination> CreateCombinations(List<ICard> cardList, int playersSize)
         {
-            List<ICombination> combinations = new List<ICombination>();
+            var combinations = new List<ICombination>();
 
-            int deckSize = 3;
-            int length = cardList.Count - ((playersSize + 1) * deckSize);
+            const int deckSize = 3;
+            var length = cardList.Count - ((playersSize + 1) * deckSize);
 
-            for (int i = cardList.Count - 1; i > length; i -= deckSize)
+            for (var i = cardList.Count - 1; i > length; i -= deckSize)
             {
-                ICard card1 = cardList[i];
-                ICard card2 = cardList[i - 1];
-                ICard card3 = cardList[i - 2];
+                var card1 = cardList[i];
+                var card2 = cardList[i - 1];
+                var card3 = cardList[i - 2];
 
                 ICard[] deck = { card1, card2, card3 };
 
